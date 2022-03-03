@@ -1,0 +1,2 @@
+views/*.ejs
+static/**/*.min.js

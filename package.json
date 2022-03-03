@@ -1,0 +1,88 @@
+{
+	"name": "cdm-rail-remote",
+	"productName": "CDM-Rail Remote",
+	"description": "A web remote for CDM-Rail.",
+	"version": "0.0.1",
+	"license": "MIT",
+	"repository": "https://github.com/MathieuAndrade",
+	"author": {
+		"name": "Mathieu Andrade",
+		"email": "mathieuandrade@hotmail.fr",
+		"url": "https://github.com/MathieuAndrade"
+	},
+	"scripts": {
+		"postinstall": "electron-builder install-app-deps",
+		"start": "electron .",
+		"pack": "electron-builder",
+		"dist": "electron-builder --macos --linux --windows",
+		"lint": "eslint --ext .js,.jsx,.ts,.tsx ./",
+		"lint:fix": "eslint --ext .js,.jsx,.ts,.tsx ./ --fix"
+	},
+	"dependencies": {
+		"body-parser": "^1.19.0",
+		"compression": "^1.7.4",
+		"custom-electron-titlebar": "^3.2.2-hotfix62",
+		"ejs": "^3.0.2",
+		"ejs-electron": "^2.0.3",
+		"electron-context-menu": "^0.15.0",
+		"electron-util": "^0.13.0",
+		"express": "^4.17.1",
+		"ws": "^7.2.3"
+	},
+	"devDependencies": {
+		"electron": "^7.1.1",
+		"electron-builder": "^21.2.0",
+		"eslint": "^6.8.0",
+		"eslint-config-airbnb-base": "^14.1.0",
+		"eslint-config-standard": "^14.1.1",
+		"eslint-plugin-html": "^6.0.2",
+		"eslint-plugin-import": "^2.20.2",
+		"eslint-plugin-node": "^11.1.0",
+		"eslint-plugin-promise": "^4.2.1",
+		"eslint-plugin-standard": "^4.0.1"
+	},
+	"build": {
+		"appId": "com.mathieuandrade.cdm-rail-remote",
+		"artifactName": "CDM-Rail Remote ${version}.${ext}",
+		"directories": {
+			"output": "build"
+		},
+		"copyright": "MIT",
+		"extraResources": [
+			{
+				"from": "static",
+				"to": "../static"
+			}
+		],
+		"dmg": {
+			"iconSize": 160,
+			"contents": [
+				{
+					"x": 180,
+					"y": 170
+				},
+				{
+					"x": 480,
+					"y": 170,
+					"type": "link",
+					"path": "/Applications"
+				}
+			]
+		},
+		"mac": {
+			"icon": "static/icons/icon.icns"
+		},
+		"win": {
+			"icon": "static/icons/icon.ico"
+		},
+		"linux": {
+			"icon": "static/icons"
+		},
+		"publish": [
+			{
+				"provider": "github",
+				"releaseType": "release"
+			}
+		]
+	}
+}

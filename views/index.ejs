@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="icon" href="../static/icons/icon.png" type="image/svg+xml">
+    <title>CDM-Rail Remote</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.3.3/dist/css/uikit.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" type="text/css" href="static/css/style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.3.3/dist/js/uikit.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.3.3/dist/js/uikit-icons.min.js" defer></script>
+    <script src="static/js/app.js" defer></script>
+  </head>
+
+  <body>
+    <div class="uk-grid-divider uk-child-width-expand@s uk-margin-top" uk-grid>
+      <div>
+        <div class="uk-flex uk-flex-column uk-margin-left uk-margin-right">
+
+          <div class="uk-card uk-card-default uk-card-small">
+            <div class="uk-card-header">
+              <div class="uk-grid-small uk-flex-middle" uk-grid>
+                <div class="uk-width-expand">
+                  <div id="stateLabel" class="uk-card-badge uk-label uk-label-danger">Etat: arrêt</div>
+                  <h5 class="uk-card-title uk-margin-remove-bottom">Commandes générales</h5>
+                </div>
+              </div>
+            </div>
+            <div class="uk-card-body">
+              <div class="uk-flex uk-flex-center">
+                <div class="uk-child-width-auto@s uk-text-center uk-grid-small" uk-grid>
+                  <div>
+                    <button id="powerOn" class="uk-button button-success uk-button-small onclick="
+                      onclick="onClickPower('ON')">Power on</button>
+                  </div>
+                  <div>
+                    <button id="powerOff" class="uk-button button-danger uk-button-small"
+                      onclick="onClickPower('OFF')">Power off</button>
+                  </div>
+                  <div>
+                    <button id="stopAll" class="uk-button button-secondary uk-button-small" onclick="onClickStopAll('STOPALL')">Arrêt des trains</button>
+                  </div>
+                  <div class="mt-15-medium" hidden>
+                    <button id="startAll" class="uk-button button-warning uk-button-small" onclick="onClickStopAll('STARTALL')">Redémarrage des trains</button>
+                  </div>
+                  <div hidden>
+                    <button class="uk-button button-primary uk-button-small"
+                      onclick="onClickAddThrottle('<%= throttleCount %>')">Ajouter un controller</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="uk-grid-column-small uk-grid-row-small uk-child-width-1-2@l uk-text-center uk-flex-center uk-margin-top uk-margin-bottom"
+            uk-grid="masonry: true">
+
+            <% for(var y = 1; y < throttleCount; y++) { %>
+            <div>
+              <div class="uk-card uk-card-default uk-card-small">
+                <div class="uk-card-media-top uk-margin-top">
+                  <canvas id="gaugeMeter<%= y %>" width="300" height="250"></canvas>
+                </div>
+                <div class="uk-card-body">
+                  <input id="sliderMeter<%= y %>" class="uk-range" type="range" value="0" min="0" max="126" step="1">
+                  <div class="uk-grid-small uk-child-width-auto uk-text-center uk-flex-center" uk-grid
+                    style="margin: 10px 0;">
+                    <div class="uk-first-column-responsive">
+                      <div class="switcher">
+                        <input type="radio" name="balance" value="forward<%= y %>" id="forward<%= y %>"
+                          class="switcher-input switcher-input" checked onclick="onClickDirectionThrottle('<%= y %>', 'FORWARD')">
+                        <label for="forward<%= y %>" class="switcher-label">&nbsp;Avant&nbsp;</label>
+
+                        <input type="radio" name="balance" value="revers<%= y %>" id="revers<%= y %>"
+                        class="switcher-input switcher-input-right" onclick="onClickDirectionThrottle('<%= y %>', 'REVERSE')">
+                        <label for="revers<%= y %>" class="switcher-label">Arrière</label>
+
+                        <span class="switcher-toggle"></span>
+                      </div>
+                    </div>
+                    <div class="mt-4">
+                      <label class="uk-form-label">Adresse: </label>
+                    </div>
+                    <div class="mt-4">
+                      <input id="locoAddr<%= y %>" class="uk-input uk-form-small uk-form-width-xsmall" type="text"
+                        placeholder="Exemple: 1" value="<%= y %>">
+                    </div>
+                    <div class="mt-4">
+                      <button id="stop<%= y %>" class="uk-button button-danger uk-button-small"
+                        onclick="onClickStopAndGo('<%= y %>', 'stop')" hidden>Stop</button>
+                      <button id="go<%= y %>" class="uk-button button-success uk-button-small"
+                        onclick="onClickStopAndGo('<%= y %>','go')">&nbsp;Go&nbsp;</button>
+                    </div>
+                  </div>
+
+                  <div class="uk-margin-right uk-margin-left">
+                    <div uk-slider>
+                      <div class="uk-position-relative">
+                        <div class="uk-slider-container uk-light">
+                          <ul class="uk-slider-items uk-child-width-auto">
+                            <% for(var x = 0; x < 29; x++) { %>
+                            <li>
+                              <button id="functionOn<%= x %>"
+                                class="uk-button button-secondary uk-button-small uk-margin-right"
+                                onclick="onClickLocoFunc('<%= y %>', 1, '<%= x %>')">F<%= x %></button>
+                              <button id="functionOff<%= x %>"
+                                class="uk-button button-primary uk-button-small uk-margin-right"
+                                onclick="onClickLocoFunc('<%= y %>', 0, '<%= x %>')" hidden>F<%= x %></button>
+                            </li>
+                            <% } %>
+                          </ul>
+                        </div>
+
+                        <div class="uk-visible">
+                          <a class="uk-position-center-left-out uk-position-small" href="#" uk-slidenav-previous
+                            uk-slider-item="previous" style="margin-right: 0;"></a>
+                          <a class="uk-position-center-right-out uk-position-small" href="#" uk-slidenav-next
+                            uk-slider-item="next" style="margin-left: 0;"></a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <% } %>
+
+          </div>
+        </div>
+      </div>
+      <div hidden>
+        <div class="uk-flex uk-flex-column uk-margin-right uk-margin-left">
+
+          <div class="uk-card uk-card-default uk-card-small">
+            <div class="uk-card-header">
+              <div class="uk-grid-small uk-flex-middle" uk-grid>
+                <div class="uk-width-expand">
+                  <h5 class="uk-card-title uk-margin-remove-bottom">Aiguillages</h5>
+                </div>
+              </div>
+            </div>
+            <div class="uk-card-body">
+              <div class="uk-flex uk-flex-center">
+                <div class="uk-child-width-auto@s uk-text-center uk-flex-center" uk-grid>
+                  <div>
+                    <div class="uk-child-width-auto uk-text-center uk-flex-center" uk-grid>
+                      <div>
+                        <label class="uk-form-label">Nombre d'aiguillage: </label>
+                      </div>
+                      <div>
+                        <input id="needlesCount" class="uk-input uk-form-small uk-form-width-xsmall" type="number"
+                          placeholder="Exemple: 1" value="<%= needleCount %>">
+                      </div>
+                      <div>
+                        <label class="uk-form-label">Adresse de départ: </label>
+                      </div>
+                      <div>
+                        <input id="firstNeedleAddr" class="uk-input uk-form-small uk-form-width-xsmall" type="number"
+                          placeholder="Exemple: 1" value="1">
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <label><input id="addrAuto" class="uk-checkbox" type="checkbox" checked> Adresse auto</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="uk-grid-column-small uk-grid-row-small uk-child-width-auto@s uk-text-center uk-flex-center uk-margin-top uk-margin-bottom"
+            uk-grid="masonry: true">
+            <!-- For each the number of needles to create view -->
+            <% for(var i = 1; i <= needleCount; i++) { %>
+            <div>
+              <div class="uk-card uk-card-default uk-card-small">
+                <div class="uk-card-body">
+
+                  <!-- Needle simple -->
+                  <div id="needleSimpleRadios<%= i %>"
+                    class="uk-grid-small uk-child-width-auto uk-grid uk-text-center uk-flex-center pl-13">
+                    <input class="uk-radio" type="radio" name="needleSimpleRadio<%= i %>"
+                      onclick="onClickNeedle('<%= i %>', 0, 'Simple');" checked>
+                    <input class="uk-radio uk-margin-small-left" type="radio" name="needleSimpleRadio<%= i %>"
+                      onclick="onClickNeedle('<%= i %>', 2, 'Simple');">
+                  </div>
+
+                  <svg id="needleSimple<%= i %>" class="uk-margin-small-top uk-margin-small-bottom" width="50"
+                    height="81.6" viewBox="0 0 75 204" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path id="needleSimplePosition0<%= i %>" fill-rule="evenodd" clip-rule="evenodd"
+                      d="M22 2L22 202H2L2 2H22Z" stroke="#002864" fill="#316CBE" stroke-width="4" />
+                    <path id="needleSimplePosition2<%= i %>" fill-rule="evenodd" clip-rule="evenodd"
+                      d="M29.9035 141.449C25.5342 156.253 22.5 175.152 22.5 202H2.5C2.5 173.598 5.71584 152.748 10.7215 135.787C15.7223 118.843 22.4057 106.178 28.687 94.4641C28.8712 94.1206 29.055 93.778 29.2383 93.4363C35.3264 82.0874 40.9102 71.6786 45.1458 58.174C49.483 44.3453 52.5 26.9047 52.5 2H72.5C72.5 28.5983 69.267 48.0967 64.2292 64.1592C59.418 79.4993 53.0454 91.3719 47.0598 102.523C46.8102 102.989 46.5612 103.453 46.313 103.915C40.0943 115.513 34.2777 126.628 29.9035 141.449Z"
+                      stroke="#002864" stroke-width="4" />
+                  </svg>
+
+                  <!-- Needle double -->
+                  <div id="needleDoubleRadios<%= i %>"
+                    class="uk-grid-small uk-child-width-auto uk-grid uk-text-center uk-flex-center pl-15 display-none">
+                    <input class="uk-radio" type="radio" name="needleDoubleRadio<%= i %>"
+                      onclick="onClickNeedle('<%= i %>', 1,'Double');">
+                    <input class="uk-radio uk-margin-small-left" type="radio" name="needleDoubleRadio<%= i %>"
+                      onclick="onClickNeedle('<%= i %>', 0, 'Double');" checked>
+                    <input class="uk-radio uk-margin-small-left" type="radio" name="needleDoubleRadio<%= i %>"
+                      onclick="onClickNeedle('<%= i %>', 2, 'Double');">
+                  </div>
+
+                  <svg id="needleDouble<%= i %>" class="display-none uk-margin-small-top uk-margin-small-bottom"
+                    width="50" height="81.6" viewBox="0 0 125 204" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path id="needleDoublePosition0<%= i %>" fill-rule="evenodd" clip-rule="evenodd"
+                      d="M72 2L72 202H52L52 2H72Z" fill="#316CBE" stroke="#002864" stroke-width="4" />
+                    <path id="needleDoublePosition2<%= i %>" fill-rule="evenodd" clip-rule="evenodd"
+                      d="M79.9035 141.449C75.5342 156.253 72.5 175.152 72.5 202H52.5C52.5 173.598 55.7158 152.748 60.7215 135.787C65.7223 118.843 72.4057 106.178 78.687 94.4641C78.8712 94.1206 79.055 93.778 79.2383 93.4363C85.3264 82.0874 90.9102 71.6786 95.1458 58.174C99.483 44.3453 102.5 26.9047 102.5 2H122.5C122.5 28.5983 119.267 48.0967 114.229 64.1592C109.418 79.4993 103.045 91.3719 97.0598 102.523C96.8102 102.989 96.5612 103.453 96.313 103.915C90.0943 115.513 84.2777 126.628 79.9035 141.449Z"
+                      stroke="#002864" stroke-width="4" />
+                    <path id="needleDoublePosition1<%= i %>" fill-rule="evenodd" clip-rule="evenodd"
+                      d="M45.0965 141.449C49.4658 156.253 52.5 175.152 52.5 202H72.5C72.5 173.598 69.2842 152.748 64.2785 135.787C59.2777 118.843 52.5943 106.178 46.313 94.4641C46.1288 94.1206 45.945 93.778 45.7617 93.4363C39.6736 82.0874 34.0898 71.6786 29.8542 58.174C25.517 44.3453 22.5 26.9047 22.5 2H2.5C2.5 28.5983 5.73299 48.0967 10.7708 64.1592C15.582 79.4993 21.9546 91.3719 27.9402 102.523C28.1898 102.989 28.4388 103.453 28.687 103.915C34.9057 115.513 40.7223 126.628 45.0965 141.449Z"
+                      stroke="#002864" stroke-width="4" />
+                  </svg>
+
+                  <!-- Crossover -->
+                  <div id="crossoverRadios<%= i %>"
+                    class="uk-grid-small uk-child-width-auto uk-grid uk-text-center uk-flex-center pl-13 display-none">
+                    <input class="uk-radio" type="radio" id="crossoverRadio1<%= i %>" name="crossoverRadio<%= i %>"
+                      onclick="onClickNeedle('<%= i %>', 1, 'crossover');" checked>
+                    <input class="uk-radio uk-margin-small-left" type="radio" id="crossoverRadio2<%= i %>"
+                      name="crossoverRadio<%= i %>" onclick="onClickNeedle('<%= i %>', 2, 'crossover');">
+                  </div>
+
+                  <svg id="crossover<%= i %>" class="display-none uk-margin-small-top uk-margin-small-bottom" width="50"
+                    height="81.6" viewBox="0 0 87 202" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path id="crossoverPosition14<%= i %>" fill-rule="evenodd" clip-rule="evenodd"
+                      d="M64.8034 199.392L2.99999 9.18034L22.0211 3L83.8245 193.211L64.8034 199.392Z" stroke="#002864"
+                      stroke-width="4" />
+                    <path id="crossoverPosition23<%= i %>" fill-rule="evenodd" clip-rule="evenodd"
+                      d="M83.8245 9.18034L22.0211 199.392L3 193.211L64.8034 3L83.8245 9.18034Z" stroke="#002864"
+                      stroke-width="4" />
+                    <path id="crossoverPosition13<%= i %>" fill-rule="evenodd" clip-rule="evenodd"
+                      d="M53.8611 101.398L22.0211 199.392L3 193.211L32.8977 101.196L3.00005 9.18034L22.0212 3L53.9802 101.36L53.8611 101.398Z"
+                      fill="#316CBE" />
+                    <path id="crossoverPosition24<%= i %>" fill-rule="evenodd" clip-rule="evenodd"
+                      d="M33.1191 101.398L64.959 199.392L83.9802 193.211L54.0825 101.196L83.9801 9.18034L64.959 3L33 101.36L33.1191 101.398Z" />
+                  </svg>
+
+                  <div id="crossoverRadios2<%= i %>"
+                    class="uk-grid-small uk-child-width-auto uk-grid uk-text-center uk-flex-center pl-13 display-none">
+                    <input class="uk-radio" type="radio" id="crossoverRadio3<%= i %>" name="crossoverRadio2<%= i %>"
+                      onclick="onClickNeedle('<%= i %>', 3, 'crossover2');" checked>
+                    <input class="uk-radio uk-margin-small-left" type="radio" id="crossoverRadio4<%= i %>"
+                      name="crossoverRadio2<%= i %>" onclick="onClickNeedle('<%= i %>', 4, 'crossover2');">
+                  </div>
+
+                  <div class="uk-grid-small uk-child-width-auto uk-text-center uk-flex-center" uk-grid>
+                    <div>
+                      <label class="uk-form-label">Adresse: </label>
+                    </div>
+                    <div>
+                      <input id="needleAddr<%= i %>" class="uk-input uk-form-small uk-form-width-xsmall" type="number"
+                        placeholder="Exemple: 1" value="<%= i %>">
+                    </div>
+                  </div>
+                  <div class="uk-grid-small uk-child-width-auto uk-grid uk-text-center uk-flex-center">
+                    <label><input class="uk-radio" type="radio" name="radio<%= i %>" data-type="1"
+                        onclick="onChangeNeedleType('<%= i %>', 1);" checked> Simple</label>
+                    <label><input class="uk-radio" type="radio" name="radio<%= i %>" data-type="2"
+                        onclick="onChangeNeedleType('<%= i %>', 2);"> Triple</label>
+                    <label><input class="uk-radio" type="radio" name="radio<%= i %>" data-type="3"
+                        onclick="onChangeNeedleType('<%= i %>', 3);"> Croisement</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <% } %>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal-emergency" class="uk-flex-top" uk-modal esc-close="false" bg-close="false">
+      <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+        <div class="uk-modal-body uk-text-center" style="display: flex; align-items: center; justify-content: center;">
+          <svg viewBox="64 64 896 896" focusable="false" class="" data-icon="close-circle" width="2em" height="2em"
+            fill="rgb(255, 77, 79)" aria-hidden="true" style="padding-right: 10px;">
+            <path
+              d="M685.4 354.8c0-4.4-3.6-8-8-8l-66 .3L512 465.6l-99.3-118.4-66.1-.3c-4.4 0-8 3.5-8 8 0 1.9.7 3.7 1.9 5.2l130.1 155L340.5 670a8.32 8.32 0 00-1.9 5.2c0 4.4 3.6 8 8 8l66.1-.3L512 564.4l99.3 118.4 66 .3c4.4 0 8-3.5 8-8 0-1.9-.7-3.7-1.9-5.2L553.5 515l130.1-155c1.2-1.4 1.8-3.3 1.8-5.2z">
+            </path>
+            <path
+              d="M512 65C264.6 65 64 265.6 64 513s200.6 448 448 448 448-200.6 448-448S759.4 65 512 65zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z">
+            </path>
+          </svg>
+          <b>Arrêt d'urgence déclenché.</b>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal-lostConnection" class="uk-flex-top" uk-modal esc-close="false" bg-close="false">
+      <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+        <div class="uk-modal-body uk-text-center" style="display: flex; align-items: center; justify-content: center;">
+          <svg viewBox="64 64 896 896" focusable="false" class="" data-icon="disconnect" width="2em" height="2em"
+            fill="rgb(255, 77, 79)" aria-hidden="true" style="padding-right: 10px;">
+            <path
+              d="M832.6 191.4c-84.6-84.6-221.5-84.6-306 0l-96.9 96.9 51 51 96.9-96.9c53.8-53.8 144.6-59.5 204 0 59.5 59.5 53.8 150.2 0 204l-96.9 96.9 51.1 51.1 96.9-96.9c84.4-84.6 84.4-221.5-.1-306.1zM446.5 781.6c-53.8 53.8-144.6 59.5-204 0-59.5-59.5-53.8-150.2 0-204l96.9-96.9-51.1-51.1-96.9 96.9c-84.6 84.6-84.6 221.5 0 306s221.5 84.6 306 0l96.9-96.9-51-51-96.8 97zM260.3 209.4a8.03 8.03 0 00-11.3 0L209.4 249a8.03 8.03 0 000 11.3l554.4 554.4c3.1 3.1 8.2 3.1 11.3 0l39.6-39.6c3.1-3.1 3.1-8.2 0-11.3L260.3 209.4z">
+            </path>
+          </svg>
+          <b>Connexion avec le serveur perdue.</b>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal-CDMConnection" class="uk-flex-top" uk-modal esc-close="false" bg-close="false">
+      <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+        <div class="uk-modal-body uk-text-center" style="display: flex; align-items: center; justify-content: center;">
+          <svg viewBox="64 64 896 896" focusable="false" class="" data-icon="wifi" width="2em" height="2em"
+            fill="rgb(255, 77, 79)" aria-hidden="true" style="padding-right: 10px;">
+            <path
+              d="M723 620.5C666.8 571.6 593.4 542 513 542s-153.8 29.6-210.1 78.6a8.1 8.1 0 00-.8 11.2l36 42.9c2.9 3.4 8 3.8 11.4.9C393.1 637.2 450.3 614 513 614s119.9 23.2 163.5 61.5c3.4 2.9 8.5 2.5 11.4-.9l36-42.9c2.8-3.3 2.4-8.3-.9-11.2zm117.4-140.1C751.7 406.5 637.6 362 513 362s-238.7 44.5-327.5 118.4a8.05 8.05 0 00-1 11.3l36 42.9c2.8 3.4 7.9 3.8 11.2 1C308 472.2 406.1 434 513 434s205 38.2 281.2 101.6c3.4 2.8 8.4 2.4 11.2-1l36-42.9c2.8-3.4 2.4-8.5-1-11.3zm116.7-139C835.7 241.8 680.3 182 511 182c-168.2 0-322.6 59-443.7 157.4a8 8 0 00-1.1 11.4l36 42.9c2.8 3.3 7.8 3.8 11.1 1.1C222 306.7 360.3 254 511 254c151.8 0 291 53.5 400 142.7 3.4 2.8 8.4 2.3 11.2-1.1l36-42.9c2.9-3.4 2.4-8.5-1.1-11.3zM448 778a64 64 0 10128 0 64 64 0 10-128 0z">
+            </path>
+          </svg>
+          <b>Connexion avec CDM-Rail non établie.</b>
+        </div>
+      </div>
+    </div>
+  </body>
+
+</html>

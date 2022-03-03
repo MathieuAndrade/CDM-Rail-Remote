@@ -1,0 +1,244 @@
+:root{
+	--primary-color: #467fcf;
+	--primary-color-hover: #316cbe;
+	--success-color: #5eba00;
+	--success-color-hover: #4b9400;
+	--warning-color: #f1c40f;
+	--warning-color-hover: #cea70c;
+	--danger-color: #cd201f;
+	--danger-color-hover: #a11918;
+	--border-radius-medium: 10px!important;
+	--border-radius-small: 7px!important;
+	--border-radius-extra-small: 5px!important;
+	--boder-primary: 1px solid rgba(0, 40, 100, 0.12);
+}
+
+/* General style */
+
+.uk-input{
+	border-radius: var(--border-radius-extra-small);
+}
+
+.uk-button,
+.uk-label{
+	border-radius: var(--border-radius-small);
+	color: #fff;
+	text-transform: none;
+}
+
+.uk-label,
+.button-primary {
+	background-color: var(--primary-color);
+}
+
+.uk-label-success,
+.button-success {
+	background-color: var(--success-color);
+}
+
+.uk-label-warning,
+.button-warning {
+	background-color: var(--warning-color);
+}
+
+
+.uk-label-danger,
+.button-danger {
+	background-color: var(--danger-color);
+}
+
+.uk-button-default {
+  color: inherit;
+}
+
+.display-none {
+  display: none;
+}
+
+.pl-13 {
+  padding-left: 13px;
+}
+
+.pl-15 {
+  padding-left: 15px;
+}
+
+.mt-4 {
+  margin-top: 4px;
+}
+
+/*
+ * Switcher Styles
+ */
+
+ .switcher {
+  display: inline-block;
+  height: 23px;
+  padding: 4px;
+  background: #fff;
+  border-radius: 2px;
+  width: 150px;
+  border-radius: 23px;
+  border: solid 1px #ddd;
+  position: relative;
+}
+
+.switcher-input {
+  display: none;
+}
+
+.switcher-label {
+  float: left;
+  width: 50%;
+  font-size: 12px;
+  line-height: 23px;
+  color: #000;
+  text-align: center;
+  cursor: pointer;
+  position: inherit;
+  z-index: 10;
+  transition: color 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+  will-change: transform;
+}
+
+.switcher-toggle {
+  position: absolute;
+  float: left;
+  height: 23px;
+  width: 47%;
+  font-size: 12px;
+  line-height: 23px;
+  cursor: pointer;
+  background-color: #3366cc;
+  border-radius: 25px;
+  left: 5px;
+  top: 4px;
+  transition: left 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
+  will-change: transform;
+}
+
+.switcher-input:checked + .switcher-label {
+  color: #fff;
+}
+
+.switcher-input-right:checked ~ .switcher-toggle {
+  left: 79px;
+}
+
+/* Card style */
+
+.uk-card{
+	border-radius: var(--border-radius-medium);
+	border: var(--boder-primary);
+	box-shadow: none;
+}
+
+.uk-card-title{
+	font-size: 1.1rem;
+}
+
+.uk-card-badge{
+	top: 15px
+}
+
+/* Button style*/
+
+.button-secondary {
+	color: #495057;
+  background-color: #fff;
+	border: var(--boder-primary);
+  border-color: rgba(0, 40, 100, 0.12);
+}
+
+.button-primary:hover {
+	color: #fff;
+	background-color: var(--primary-color-hover);
+}
+
+.button-secondary:hover{
+  background-color: #f6f6f6;
+  border-color: rgba(0, 20, 49, 0.12);
+}
+
+.button-success:hover {
+	color: #fff;
+	background-color: var(--success-color-hover);
+}
+
+.button-warning:hover {
+	color: #fff;
+	background-color: var(--warning-color-hover);
+}
+
+.button-danger:hover {
+	color: #fff;
+	background-color: var(--danger-color-hover);
+}
+
+/* Grid style */
+
+@media (min-width: 1265px) and (max-width: 1530px) {
+  .uk-first-column-responsive {
+    width: 100%;
+  }
+}
+
+@media (min-width: 660px) and (max-width: 795px) {
+  .uk-first-column-responsive {
+    width: 100%;
+  }
+}
+
+@media (min-width: 320px) and (max-width: 390px) {
+  .uk-first-column-responsive {
+    width: 100%;
+  }
+}
+
+@media (min-width: 1200px) {
+	.uk-grid-divider>:not(.uk-first-column)::before {
+		left: 25px;
+	}
+}
+
+@media (max-width: 995px) {
+  .mt-15-medium {
+    margin-top: 15px;
+  }
+}
+
+.uk-grid-divider>:not(.uk-first-column)::before {
+  left: 10px;
+}
+
+.uk-grid-divider>:not(.uk-first-column) {
+  padding-left: 20px;
+}
+
+/* Checkbox style */
+
+.uk-checkbox{
+  border-radius: 3px;
+}
+
+.uk-checkbox:checked{
+	border-color: var(--primary-color);
+  background-color: var(--primary-color);
+}
+
+.uk-checkbox:checked, .uk-checkbox:indeterminate, .uk-radio:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+/* Form style */
+
+.uk-form-horizontal .uk-form-label {
+  width: 100px;
+  margin-top: 7px;
+  float: left;
+}
+
+.uk-form-horizontal .uk-form-controls {
+  margin-left: 115px;
+}
