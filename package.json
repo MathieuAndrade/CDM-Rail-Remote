@@ -13,7 +13,8 @@
 	"scripts": {
 		"postinstall": "electron-builder install-app-deps",
 		"start": "electron .",
-		"pack": "electron-builder",
+		"pack-x32": "electron-builder --win=portable --ia32",
+		"pack-x64": "electron-builder --win=portable --x64",
 		"dist": "electron-builder --macos --linux --windows",
 		"lint": "eslint --ext .js,.jsx,.ts,.tsx ./",
 		"lint:fix": "eslint --ext .js,.jsx,.ts,.tsx ./ --fix"
