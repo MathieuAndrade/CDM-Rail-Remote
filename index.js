@@ -53,6 +53,7 @@ const createMainWindow = async () => {
 
   win.on('ready-to-show', () => {
     win.show();
+    win.setBackgroundColor('rgba(0, 0, 0, 0)');
   });
 
   win.on('close', (e) => {

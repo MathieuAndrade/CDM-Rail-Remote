@@ -15,7 +15,7 @@
     <script src="static/js/app.js" defer></script>
   </head>
 
-  <body>
+  <body style="border-radius: 15px; background-color: yellow;">
     <div class="uk-grid-divider uk-child-width-expand@s uk-margin-top" uk-grid>
       <div>
         <div class="uk-flex uk-flex-column uk-margin-left uk-margin-right">
@@ -83,13 +83,17 @@
                       </div>
                     </div>
                     <div class="mt-4">
-                      <label class="uk-form-label">Adresse: </label>
+                      <label class="uk-form-label">Train: </label>
                     </div>
-                    <div class="mt-4">
-                      <input id="locoAddr<%= y %>" class="uk-input uk-form-small uk-form-width-xsmall" type="text"
-                        placeholder="Exemple: 1" value="<%= y %>">
+                    <div>
+                        <select id="train<%= y %>" class="uk-input uk-form-small uk-form-width-xsmall select">
+                          <option value="">--Choisir un train--</option>
+                          <%  Object.keys(trains).forEach(function (train) { %>
+                            <option value="<%= trains[train].name %>"><%= trains[train].name %></option>
+                          <% }) %>
+                        </select>
                     </div>
-                    <div class="mt-4">
+                    <div>
                       <button id="stop<%= y %>" class="uk-button button-danger uk-button-small"
                         onclick="onClickStopAndGo('<%= y %>', 'stop')" hidden>Stop</button>
                       <button id="go<%= y %>" class="uk-button button-success uk-button-small"

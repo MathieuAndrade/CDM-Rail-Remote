@@ -20,6 +20,7 @@ class Server {
     this.websocketServer = null;
     this.wss = null;
     this.tcpServer = null;
+    this.trains = {};
   }
 
   start() {
@@ -34,11 +35,13 @@ class Server {
     // server static files
     this.app.use('/static', express.static(`${rootPath}/static`));
     this.app.get('/', (request, response) => {
-      response.render(`${rootPath}/views/index.ejs`, { needleCount: this.needleCount, throttleCount: this.throttleCount });
+      response.render(`${rootPath}/views/index.ejs`, { needleCount: this.needleCount, throttleCount: this.throttleCount, trains: this.trains });
     });
 
     this.app.get('/init', (request, response) => {
-      response.send({ needleCount: this.needleCount, throttleCount: this.throttleCount, isCDMConnected: this.isCDMConnected });
+      response.send({
+        needleCount: this.needleCount, throttleCount: this.throttleCount, isCDMConnected: this.isCDMConnected, trains: this.trains,
+      });
     });
 
     this.app.post('/throttle', (request, response) => {

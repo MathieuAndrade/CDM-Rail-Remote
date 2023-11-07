@@ -13,12 +13,11 @@
     <script src="../static/js/home.js" defer></script>
   </head>
 
-  <body>
+  <body class="window">
     <div class="uk-flex uk-flex-column uk-child-width-expand@s uk-margin-left uk-margin-right uk-margin-top">
       <div id="qrcode" class="uk-flex uk-flex-center"></div>
       <div class="uk-margin-top uk-text-center">
-        <span>Pour accéder à la page de contôle flashez simplement ce QR Code avec un smartphone ou tapez l'adresse si
-          dessous dans nimporte quel navigateur.</span>
+        <span>Pour accéder à la page de contôle, flashez simplement ce QR Code avec un smartphone ou tapez l'adresse ci-dessous dans nimporte quel navigateur d'un appareil connecté au même réseau wifi.</span>
       </div>
       <div class="uk-margin-top uk-text-center">
         <a href="<%= address %>"><%= address %></a>
@@ -72,7 +71,7 @@
         </div>
         <div class="uk-modal-body uk-text-center">
           <span>Version: <%= version %></span> <br>
-          <span>Licence MIT 2020 - Mathieu Andrade</span> <br>
+          <span>Licence MIT 2023 - Mathieu Andrade</span> <br>
           <a href="<%= repoAddress %>">Sources</a>
         </div>
       </div>
@@ -99,7 +98,6 @@
 
   <script type="text/javascript">
     new QRCode(document.getElementById("qrcode"), "<%= address %>");
-
   </script>
 
 </html>

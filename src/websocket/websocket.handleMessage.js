@@ -9,11 +9,11 @@ module.exports = function parseMessage(id, ws, data) {
       ws.terminate();
     }
   } else {
-    parseCommand(payload);
+    parseCommand(id, payload);
   }
 };
 
-function parseCommandFunc(payload) {
+function parseCommandFunc(id, payload) {
   const { command, params } = payload;
   let options = null;
 
@@ -56,7 +56,7 @@ function parseCommandFunc(payload) {
         mainClass: 'LOCO',
         subClass: 'SPEED',
         func: params.direction,
-        addr: params.addr,
+        name: params.name,
         speed: params.speed,
       };
 
@@ -66,12 +66,15 @@ function parseCommandFunc(payload) {
       options = {
         mainClass: 'LOCO',
         func: 'FUNC',
-        addr: params.addr,
+        name: params.name,
         funcNumber: params.funcNumber,
         state: params.state,
       };
 
       this.server.tcpServer.sendMessage(options);
+      break;
+    case 'LOCO.DOWNLOAD':
+      this.sendMessage(id, 'trains', this.server.trains);
       break;
     case 'ACC.STATE':
       options = {

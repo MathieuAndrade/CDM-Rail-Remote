@@ -3,6 +3,7 @@ module.exports = {
   SYSTEM: {
     TCP: {
       START: () => 'C-C-00-0001-CMDGEN-_CNCT|000|',
+      SERVICES: ({ canal, commandNumber }) => buildString(`C-C-${canal}-${commandNumber}-RQSERV-RTSIM`, '01|SRV=TDCC;'),
     },
     POWER: {
       ON: ({ canal, commandNumber }) => `C-C-${canal}-${commandNumber}-CMDGEN-___GO|000|`,
@@ -12,11 +13,12 @@ module.exports = {
   LOCO: {
     STOPALL: ({ canal, commandNumber }) => `C-C-${canal}-${commandNumber}-CMDGEN-_STOP|000|`,
     STARTALL: ({ canal, commandNumber }) => `C-C-${canal}-${commandNumber}-CMDGEN-___GO|000|`,
-    FUNC: ({ canal, commandNumber, addr, funcNumber, state }) => buildString(`C-C-${canal}-${commandNumber}-CMDTRN-DCCSF`, `04|AD=${addr};MODE=128;STEP=0;FX${funcNumber}=${state};`),
+    FUNC: ({ canal, commandNumber, name, funcNumber, state }) => buildString(`C-C-${canal}-${commandNumber}-CMDTRN-DCCSF`, `02|NAME=${name};FX${funcNumber}=${state};`),
     SPEED: {
-      FORWARD: ({ canal, commandNumber, addr, speed }) => buildString(`C-C-${canal}-${commandNumber}-CMDTRN-DCCSF`, `03|AD=${addr};MODE=128;STEP=${speed};`),
-      REVERSE: ({ canal, commandNumber, addr, speed }) => buildString(`C-C-${canal}-${commandNumber}-CMDTRN-DCCSF`, `04|AD=${addr};MODE=128;STEP=${-Math.abs(speed)};INV=1;`),
+      FORWARD: ({ canal, commandNumber, name, speed }) => buildString(`C-C-${canal}-${commandNumber}-CMDTRN-SPEED`, `02|NAME=${name};UREQ=${speed};`),
+      REVERSE: ({ canal, commandNumber, name, speed }) => buildString(`C-C-${canal}-${commandNumber}-CMDTRN-SPEED`, `02|NAME=${name};UREQ=${-Math.abs(speed)};`),
     },
+    DOWNLOAD: ({ canal, commandNumber }) => `C-C-${canal}-${commandNumber}-DSCTRN-DLOAD|000|`,
   },
   ACC: {
     STATE: ({ canal, commandNumber, addr, state }) => buildString(`C-C-${canal}-${commandNumber}-CMDACC-DCCAC`, `02|AD=${addr};STATE=${state};`),

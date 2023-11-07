@@ -69,15 +69,20 @@ function initTitleBar() {
   titleBar.updateTitle('CDM-Rail Remote');
 
   titleBarMenu = new Menu();
-  titleBarMenu.append(new MenuItem({
-    label: 'Fichier',
-    submenu: [
-      { label: 'Connexion à CDM-Rail', click: () => setTcpConnection() },
-      { label: 'Deconnexion de CDM-Rail', click: () => setTcpConnection('stop') },
-      { type: 'separator' },
-      { label: 'Quitter', click: () => remote.getCurrentWindow().close() },
-    ],
-  }));
+  titleBarMenu.append(
+    new MenuItem({
+      label: 'Fichier',
+      submenu: [
+        { label: 'Connexion à CDM-Rail', click: () => setTcpConnection() },
+        {
+          label: 'Deconnexion de CDM-Rail',
+          click: () => setTcpConnection('stop'),
+        },
+        { type: 'separator' },
+        { label: 'Quitter', click: () => remote.getCurrentWindow().close() },
+      ],
+    }),
+  );
 
   /*
   titleBarMenu.append(new MenuItem({
@@ -89,16 +94,24 @@ function initTitleBar() {
   }));
   */
 
-  titleBarMenu.append(new MenuItem({
-    label: 'Aide',
-    submenu: [
-      { label: 'Forum CDM-Rail', click: () => shell.openExternal('http://cdmrail.free.fr/ForumCDR/index.php') },
-      /* {label: 'Rapport de bug',}, */
-      /* {label: 'Demande de fonctionalité',}, */
-      { type: 'separator' },
-      { label: 'À propos', click: () => UIkit.modal(document.getElementById('modal-version')).show() },
-    ],
-  }));
+  titleBarMenu.append(
+    new MenuItem({
+      label: 'Aide',
+      submenu: [
+        {
+          label: 'Forum CDM-Rail',
+          click: () => shell.openExternal('http://cdmrail.free.fr/ForumCDR/index.php'),
+        },
+        /* {label: 'Rapport de bug',}, */
+        /* {label: 'Demande de fonctionalité',}, */
+        { type: 'separator' },
+        {
+          label: 'À propos',
+          click: () => UIkit.modal(document.getElementById('modal-version')).show(),
+        },
+      ],
+    }),
+  );
 
   titleBar.updateMenu(titleBarMenu);
 }

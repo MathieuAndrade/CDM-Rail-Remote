@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 // Variables
-const maxSpeed = 140;
 const maxStep = 126;
 const directionsThrottle = [];
 let needleCount = 11;
@@ -11,6 +10,9 @@ let websocketConnected = false;
 let isCDMConnected = false;
 let gaugeCenterX = 0;
 let gaugeCenterY = 0;
+let maxSpeed = 140;
+let selectedTrain = null;
+let trains = {};
 
 // Main funciton
 (async () => {
@@ -25,6 +27,7 @@ let gaugeCenterY = 0;
     drawGauge(0, i);
     document.getElementById(`sliderMeter${i}`).addEventListener('input', onChangeSlider);
     document.getElementById(`gaugeMeter${i}`).addEventListener('click', onClickGauge);
+    document.getElementById(`train${i}`).addEventListener('change', (e) => onTrainChange(e, i));
   }
 })();
 
@@ -51,6 +54,8 @@ function initWebsocket() {
         },
       }),
     );
+
+    sendMessage('LOCO.DOWNLOAD');
   };
 
   ws.onerror = (e) => {
@@ -161,6 +166,11 @@ function drawGauge(value, index) {
 function onClickGauge(e) {
   e.preventDefault();
 
+  if (selectedTrain === null) {
+    notificationTrain();
+    return;
+  }
+
   const { id } = e.target;
   const index = parseInt(id.substring(id.length - 1));
   let speed = 0;
@@ -194,8 +204,22 @@ function onClickGauge(e) {
   document.getElementById(`sliderMeter${index}`).value = speed;
 }
 
+function onTrainChange(e, i) {
+  e.preventDefault();
+
+  selectedTrain = trains[e.target.value];
+  setSelectedTrainState(i);
+}
+
 function onChangeSlider(e) {
   e.preventDefault();
+
+  if (selectedTrain === null) {
+    notificationTrain();
+    document.getElementById('sliderMeter1').value = 0;
+    return;
+  }
+
   const { id } = e.target;
   const index = parseInt(id.substring(id.length - 1));
   const speed = parseInt(e.target.value);
@@ -227,6 +251,11 @@ function onChangeNeedleCount(e) {
 // Triggered by html
 // eslint-disable-next-line no-unused-vars
 function onClickStopAndGo(index, action) {
+  if (selectedTrain === null) {
+    notificationTrain();
+    return;
+  }
+
   const speed = action === 'go' ? 126 : 0;
 
   drawGauge(speed, index);
@@ -247,9 +276,12 @@ function onClickDirectionThrottle(index, direction) {
 // Triggered by html
 // eslint-disable-next-line no-unused-vars
 function onClickLocoFunc(index, state, funcNumber) {
-  const addr = document.getElementById(`locoAddr${index}`).value;
+  if (selectedTrain === null) {
+    notificationTrain();
+    return;
+  }
 
-  sendMessage('LOCO.FUNC', { addr: parseInt(addr), funcNumber, state });
+  sendMessage('LOCO.FUNC', { name: selectedTrain.name, funcNumber, state });
 
   if (state === 1) {
     document.getElementById(`functionOn${funcNumber}`).hidden = true;
@@ -372,6 +404,10 @@ function onClickStopAll(action) {
 
 /** Utilities */
 
+function notificationTrain() {
+  UIkit.notification("<span uk-icon='icon: warning'></span> Aucun train sélectionné", { status: 'warning', timeout: 1000000 });
+}
+
 function resetFillPath(pathList) {
   for (let i = 0; i < pathList.length; i++) {
     pathList[i].setAttribute('fill', 'none');
@@ -379,10 +415,10 @@ function resetFillPath(pathList) {
 }
 
 function onSpeedChange(value, index) {
-  const speed = Math.round((value * maxSpeed) / maxStep);
-  const addr = document.getElementById(`locoAddr${index}`).value;
+  const speedKmh = Math.round((value * maxSpeed) / maxStep);
+  const speedPercentage = Math.round((100 * speedKmh) / maxSpeed);
 
-  if (speed > 0) {
+  if (speedKmh > 0) {
     document.getElementById(`go${index}`).hidden = true;
     document.getElementById(`stop${index}`).hidden = false;
   } else {
@@ -398,7 +434,7 @@ function onSpeedChange(value, index) {
     direction = first;
   }
 
-  sendMessage('LOCO.SPEED', { addr: parseInt(addr), speed, direction });
+  sendMessage('LOCO.SPEED', { name: selectedTrain.name, speed: speedPercentage, direction });
 }
 
 function sendMessage(command, params) {
@@ -427,12 +463,54 @@ function setState(options) {
   }
 }
 
+function setSelectedTrainState(index) {
+  selectedTrain = trains[selectedTrain.name];
+  maxSpeed = selectedTrain.tmax;
+
+  if (selectedTrain.currentSpeed < 0) {
+    selectedTrain.currentSpeed = Math.abs(selectedTrain.currentSpeed);
+    document.getElementById(`forward${index}`).checked = false;
+    document.getElementById(`revers${index}`).checked = true;
+  } else {
+    document.getElementById(`revers${index}`).checked = false;
+    document.getElementById(`forward${index}`).checked = true;
+  }
+
+  if (selectedTrain.currentSpeed > 0) {
+    document.getElementById(`go${index}`).hidden = true;
+    document.getElementById(`stop${index}`).hidden = false;
+  } else {
+    document.getElementById(`stop${index}`).hidden = true;
+    document.getElementById(`go${index}`).hidden = false;
+  }
+
+  selectedTrain.functions.forEach((f, i) => {
+    if (f === 1) {
+      document.getElementById(`functionOn${i}`).hidden = true;
+      document.getElementById(`functionOff${i}`).hidden = false;
+    } else {
+      document.getElementById(`functionOff${i}`).hidden = true;
+      document.getElementById(`functionOn${i}`).hidden = false;
+    }
+  });
+
+  drawGauge(selectedTrain.currentSpeed || 0, index);
+  document.getElementById(`sliderMeter${index}`).value = selectedTrain.currentSpeed || 0;
+}
+
 function parseMessage(message) {
   const data = JSON.parse(message.data);
 
   switch (data.type) {
     case 'update':
       setState(data.payload);
+      break;
+    case 'trains':
+      trains = data.payload;
+
+      if (selectedTrain) {
+        setSelectedTrainState(1);
+      }
       break;
     default:
       break;

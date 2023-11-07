@@ -16,19 +16,31 @@ module.exports = class TcpServer {
     this.client.connect(9999, '127.0.0.1', () => {
       this.client.on('data', (data) => this.handleMessage(data.toString()));
 
+      this.client.on('error', (err) => console.log(err));
+
       this.client.on('close', () => {
         this.server.isCDMConnected = false;
         this.server.websocketServer.sendUpdate();
       });
 
       this.sendMessage({ mainClass: 'SYSTEM', subClass: 'TCP', func: 'START' });
+
+      // Wait until server reponse on start
+      setTimeout(() => {
+        this.sendMessage({ mainClass: 'SYSTEM', subClass: 'TCP', func: 'SERVICES' });
+        this.sendMessage({ mainClass: 'LOCO', func: 'DOWNLOAD' });
+      }, 500);
     });
   }
 
   stop() {
+    this.client.removeAllListeners();
     this.client.end();
     this.server.isCDMConnected = false;
     this.server.websocketServer.sendUpdate();
+
+    // Reset client to ensure next connections works correctly
+    this.client = new net.Socket();
   }
 
   sendMessage(options) {
@@ -38,10 +50,10 @@ module.exports = class TcpServer {
 
     if (subClass) {
       this.client.write(this.messageType[mainClass][subClass][func](params));
-      console.log(this.messageType[mainClass][subClass][func](params));
+      console.log('\x1b[30mSend: %s\x1b[0m', this.messageType[mainClass][subClass][func](params));
     } else {
       this.client.write(this.messageType[mainClass][func](params));
-      console.log(this.messageType[mainClass][func](params));
+      console.log('\x1b[30mSend: %s\x1b[0m', this.messageType[mainClass][func](params));
     }
   }
 };

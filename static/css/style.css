@@ -10,10 +10,40 @@
 	--border-radius-medium: 10px!important;
 	--border-radius-small: 7px!important;
 	--border-radius-extra-small: 5px!important;
-	--boder-primary: 1px solid rgba(0, 40, 100, 0.12);
+	--border-primary: 1px solid rgba(0, 40, 100, 0.12);
+	--border-secondary: 1px solid rgba(0, 40, 100, 0.3);
 }
 
 /* General style */
+
+html,
+body {
+  background-color: transparent!important;
+}
+
+.window > :first-child {
+  border-radius: 5px 5px 0 0;
+  background-color: #f7f9fc!important;
+  border-top: var(--border-secondary);
+  border-left: var(--border-secondary);
+  border-right: var(--border-secondary);
+}
+
+.window > :nth-child(2) {
+  border-radius: 0 0 5px 5px;
+  background-color: #f7f9fc;
+  border-bottom: var(--border-secondary);
+  border-left: var(--border-secondary);
+  border-right: var(--border-secondary);
+}
+
+.window-close-bg {
+  border-radius: 0 5px 0 0;
+}
+
+.uk-open {
+  border-radius: 5px;
+}
 
 .uk-input{
 	border-radius: var(--border-radius-extra-small);
@@ -49,6 +79,15 @@
 
 .uk-button-default {
   color: inherit;
+}
+
+.uk-notification-message {
+  border: var(--border-secondary);
+	border-radius: var(--border-radius-small);
+}
+
+.select {
+  line-height: normal!important;
 }
 
 .display-none {
@@ -129,7 +168,7 @@
 
 .uk-card{
 	border-radius: var(--border-radius-medium);
-	border: var(--boder-primary);
+	border: var(--border-primary);
 	box-shadow: none;
 }
 
@@ -146,7 +185,7 @@
 .button-secondary {
 	color: #495057;
   background-color: #fff;
-	border: var(--boder-primary);
+	border: var(--border-primary);
   border-color: rgba(0, 40, 100, 0.12);
 }
 

@@ -2,7 +2,7 @@
 	"name": "cdm-rail-remote",
 	"productName": "CDM-Rail Remote",
 	"description": "A web remote for CDM-Rail.",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"license": "MIT",
 	"repository": "https://github.com/MathieuAndrade",
 	"author": {
